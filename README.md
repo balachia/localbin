@@ -25,7 +25,7 @@ Several reasons for this:
 1. standardize keys
 2. unbreak Mendeley's mangling of non-ASCII characters, such as {\o}
 
-TODO:
+### TODO:
 
  - keep this thing from breaking old keys: right now, it can conceivably rewrite
  old keys. I want to figure out a way to sort items by date of addition into the
