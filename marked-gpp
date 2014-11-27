@@ -1,0 +1,6 @@
+#!/usr/local/bin/python
+import sys
+import os
+from subprocess import call
+
+call(['gpp'] + sys.argv[1:], cwd=os.environ['MARKED_ORIGIN'])
