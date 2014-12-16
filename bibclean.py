@@ -2,12 +2,14 @@
 import bibtexparser as btp
 from bibtexparser.bparser import BibTexParser
 from bibtexparser.bwriter import BibTexWriter
-from bibtexparser.customization import homogeneize_latex_encoding
+from bibtexparser.customization import homogeneize_latex_encoding, convert_to_unicode
+from bibtexparser.latexenc import string_to_latex
 import os.path
 from os import remove
 import tempfile
 from subprocess import call
 import codecs
+import re
 
 bibtool = '''
 key.format = {
@@ -58,11 +60,28 @@ def seek_error_sub(bibdat, entries, minidx, maxidx):
 
     return res
 
+# customization:
+# have to preserve title formatting:
+def preserve_title(record):
+    record = convert_to_unicode(record)
+    for val in record:
+        if val not in ('id',):
+            #logger.debug('Apply string_to_latex to: %s', val)
+            record[val] = string_to_latex(record[val])
+            if val == 'title':
+                #logger.debug('Protect uppercase in title')
+                #logger.debug('Before: %s', record[val])
+                title = re.sub(r'(?<!\\)((\\\\)*)(\{|\})',r'\1',record[val])
+                record[val] = '{' + title + '}'
+                #logger.debug('After: %s', record[val])
+    return record
+
 
 # sanitize mendeley's terrible special character encoding
 with open(os.path.expanduser('~/Documents/library.bib'), mode='r') as fin:
     parser = BibTexParser()
-    parser.customization = homogeneize_latex_encoding
+    #parser.customization = homogeneize_latex_encoding
+    parser.customization = preserve_title
     bibdat = btp.load(fin, parser=parser)
 
 errors = seek_errors(bibdat)
