@@ -74,6 +74,8 @@ def preserve_title(record):
                 title = re.sub(r'(?<!\\)((\\\\)*)(\{|\})',r'\1',record[val])
                 record[val] = '{' + title + '}'
                 #logger.debug('After: %s', record[val])
+        #else:
+            #record[val] = record[val].strip()
     return record
 
 
@@ -91,6 +93,13 @@ for err in errors:
 
 if errors:
     raise SystemExit('Irreconcilable errors in bibtex')
+
+# pull existing library
+with open(os.path.expanduser('~/Documents/library-clean.bib'), mode='r') as fin:
+    parser = BibTexParser()
+    #parser.customization = homogeneize_latex_encoding
+    parser.customization = preserve_title
+    bibdat_old = btp.load(fin, parser=parser)
 
 # apparently that was enough to clean up...
 #authors = [[x['author'], x['title']] for x in bibdat.entries if 'author' in x]
@@ -118,3 +127,33 @@ bibtool_script.close()
 
 remove(bib_clean_name)
 remove(bibtool_script_name)
+
+
+# pull new library
+with open(os.path.expanduser('~/Documents/library-clean.bib'), mode='r') as fin:
+    parser = BibTexParser()
+    #parser.customization = homogeneize_latex_encoding
+    parser.customization = preserve_title
+    bibdat = btp.load(fin, parser=parser)
+
+# compare libraries
+entries = list(bibdat.entries)
+entries_old = list(bibdat_old.entries)
+
+oin = [(i,entries.count(entries_old[i])) for i in range(len(entries_old))]
+nio = [(i,entries_old.count(entries[i])) for i in range(len(entries))]
+
+oin_missing = [entries_old[i] for (i,x) in oin if x == 0]
+nio_missing = [entries[i] for (i,x) in nio if x == 0]
+# TODO: track changes, instead of just remove/add
+
+if oin_missing:
+    print('Removed:')
+    for record in oin_missing:
+        print('\t' + record['id'].strip() + '\n\t\t' + re.sub(r'\n',' ',record['title']))
+if nio_missing:
+    print('Added:')
+    for record in nio_missing:
+        #print(record['id'] + ' :: ' + record['title'])
+        print('\t' + record['id'].strip() + '\n\t\t' + re.sub(r'\n',' ',record['title']))
+
