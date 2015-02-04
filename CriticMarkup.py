@@ -17,19 +17,27 @@ cms = {
 cm_order = ['add','hil','subend','del','com','sub']
 
 def cm_process(line, mode=None):
+    # if we're already in a critic markup deletion mode
+    # check if we can exit the mode
+    # if not, return nothing
     if mode:
         (line,nsub) = re.subn(cms[mode][2],'',line)
         if nsub==0:
-            return ('',mode)
+            #return ('',mode)
+            return (None,mode)
 
+    # otherwise
     changes = dict()
     for k in cm_order:
         vs = cms[k]
         nsub = -1
         if len(vs) == 1:
+            # nonmodal critic markup: tag deletion
             while nsub != 0:
                 (line, nsub) = re.subn(vs[0],'',line)
         elif len(vs) == 3:
+            # modal critic markup: check if mode contained in line
+            # or starts on line and continues past
             while nsub != 0:
                 (line, nsub) = re.subn(vs[0],'',line)
             (line, nsub) = re.subn(vs[1],'',line)
@@ -49,7 +57,10 @@ if __name__=='__main__':
     for line in fin:
         #print(line),
         (line,mode) = cm_process(line,mode)
-        fout.write(line)
+        
+        # unless whole line was deleted, write the cleaned line
+        if line:
+            fout.write(line)
         #print(str(mode) + ' :: ' + line)
 
     fin.close()
