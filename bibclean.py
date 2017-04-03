@@ -68,7 +68,7 @@ def preserve_title(record):
         if val not in ('id',):
             #logger.debug('Apply string_to_latex to: %s', val)
             record[val] = string_to_latex(record[val])
-            if val == 'title':
+            if val in ['title'] :
                 #logger.debug('Protect uppercase in title')
                 #logger.debug('Before: %s', record[val])
                 title = re.sub(r'(?<!\\)((\\\\)*)(\{|\})',r'\1',record[val])
