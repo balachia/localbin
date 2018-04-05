@@ -107,7 +107,7 @@ fi
 # finally, set color scheme
 #for tty in $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}"); do
 if [ $all ]; then
-    echo "$theme" > .theme
+    echo "$theme" > $HOME/.theme
     for tty in $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}"); do
         color_scheme \
             "$c0" "$c1" "$c2" "$c3" "$c4" "$c5" "$c6" "$c7" \
