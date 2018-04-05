@@ -1,0 +1,16 @@
+#!/usr/bin/env zsh
+
+case "$1" in
+    start)
+        ssh willow service start_vpnclient1 && echo -n 'success' || echo -n 'fail'
+        ;;
+    stop)
+        ssh willow service stop_vpnclient1 && echo -n 'success' || echo -n 'fail'
+        ;;
+    check)
+        ssh willow pgrep vpnclient1 && echo -n 'enabled' || echo -n 'disabled'
+        ;;
+    *)
+        ssh willow pgrep vpnclient1 && echo -n 'enabled' || echo -n 'disabled'
+        ;;
+esac
