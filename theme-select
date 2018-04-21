@@ -1,0 +1,26 @@
+#!/usr/bin/env zsh
+
+cd $HOME/.local/src/iTerm2-Color-Schemes/xrdb
+
+# read class
+class=$1
+
+# load in files
+if [ "$2" != "" ]; then
+    #test="${(@f)"$(<$2)"}"
+    files=$(cat $2)
+else
+    #test="${(@f)"$(ls *.xrdb)"}"
+    files=$(ls *.xrdb)
+fi
+
+# prep class file
+echo -n "" >! $class
+
+for file in "${(@f)"$(echo $files)"}"; do
+    theme -all $file
+    echo -n $file
+    echo -n ": ${class}? [y/N] "
+    read -k 1 res
+    [[ "$res" == "y" ]] && echo '' && echo $file >> $class
+done

@@ -1,0 +1,123 @@
+#!/usr/bin/env zsh
+
+# Color scheme {{{
+# The foreground color
+fg=#dddddd
+
+# The background color
+bg=#000000
+
+# The foreground for selections
+# selection_foreground #000000
+
+# The background for selections
+# selection_background #FFFACD
+
+# The 16 terminal colors. There are 8 basic colors, each color has a dull and
+# bright version.
+
+# black
+c0=#000000
+c8=#767676
+
+# red
+c1=#cc0403
+c9=#f2201f
+
+# green
+c2=#19cb00
+c10=#23fd00
+
+# yellow
+c3=#cecb00
+c11=#fffd00
+
+# blue
+c4=#0d73cc
+c12=#1a8fff
+
+# magenta
+c5=#cb1ed1
+c13=#fd28ff
+
+# cyan
+c6=#0dcdcd
+c14=#14ffff
+
+# white
+c7=#dddddd
+c15=#ffffff
+
+# Manipulate colors 0-256
+# \033]4;{index};{color}\007
+
+# Change color 7 to #FFFFFF
+#\033]4;7;#FFFFFF\007
+
+# Change color 14 to #333333
+#\033]4;14;#333333\007
+
+# Manipulate special colors.
+# 10 = foreground, 11 = background, 12 = cursor foregound
+# 13 = mouse foreground, 708 = terminal border background
+# \033]{index};{color}\007
+
+color_scheme()
+{
+    # set colors 0 thru 15
+    echo "\033]4;0;$1\007\c"; shift
+    echo "\033]4;1;$1\007\c"; shift
+    echo "\033]4;2;$1\007\c"; shift
+    echo "\033]4;3;$1\007\c"; shift
+    echo "\033]4;4;$1\007\c"; shift
+    echo "\033]4;5;$1\007\c"; shift
+    echo "\033]4;6;$1\007\c"; shift
+    echo "\033]4;7;$1\007\c"; shift
+    echo "\033]4;8;$1\007\c"; shift
+    echo "\033]4;9;$1\007\c"; shift
+    echo "\033]4;10;$1\007\c"; shift
+    echo "\033]4;11;$1\007\c"; shift
+    echo "\033]4;12;$1\007\c"; shift
+    echo "\033]4;13;$1\007\c"; shift
+    echo "\033]4;14;$1\007\c"; shift
+    echo "\033]4;15;$1\007\c"; shift
+
+    # set fg bg
+    echo "\033]10;$1\007\c"; shift
+    echo "\033]11;$1\007\c"; shift
+}
+
+if [ "$1" = "-all" ]; then
+    all=1
+    shift
+fi
+
+theme="$1"
+
+# overwrite defaults
+if [ "$theme" = "dark" ]; then
+    fg=#dddddd
+    bg=#000000
+fi
+if [ "$theme" = "light" ]; then
+    fg=#222222
+    bg=#ffffff
+fi
+
+# finally, set color scheme
+#for tty in $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}"); do
+if [ $all ]; then
+    echo -n "$theme" > $HOME/.theme
+    for tty in $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}"); do
+        color_scheme \
+            "$c0" "$c1" "$c2" "$c3" "$c4" "$c5" "$c6" "$c7" \
+            "$c8" "$c9" "$c10" "$c11" "$c12" "$c13" "$c14" "$c15" \
+            "$fg" "$bg" \
+            >> $tty
+    done
+else
+    color_scheme \
+        "$c0" "$c1" "$c2" "$c3" "$c4" "$c5" "$c6" "$c7" \
+        "$c8" "$c9" "$c10" "$c11" "$c12" "$c13" "$c14" "$c15" \
+        "$fg" "$bg"
+fi
