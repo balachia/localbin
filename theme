@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 
-SCHEMES_DIR=$HOME/.local/src/iTerm2-Color-Schemes/xrdb
+SCHEMES_DIR=$HOME/.local/src/iTerm2-Color-Schemes/
+XRDB_DIR=$SCHEMES_DIR/xrdb
+TMUX_DIR=$SCHEMES_DIR/tmux
 OSC_PATH=$HOME/.local/bin
 
 if [ "$1" = "-all" ]; then
@@ -9,28 +11,41 @@ if [ "$1" = "-all" ]; then
 fi
 
 theme="$1"
+theme_name=$theme
 
-theme_file=$SCHEMES_DIR/$theme
+#theme_file=$SCHEMES_DIR/$theme
 if [ "$theme" = "dark" ]; then
     #theme_file="$SCHEMES_DIR/Builtin Tango Dark.xrdb"
     #theme_file="$SCHEMES_DIR/synthwave.xrdb"
-    theme_file="$SCHEMES_DIR/Jellybeans.xrdb"
+    #theme_file="$SCHEMES_DIR/Jellybeans.xrdb"
+    theme_name=Jellybeans
+    TMUX_DIR=${TMUX_DIR}-dark
 fi
 if [ "$theme" = "light" ]; then
     #theme_file="$SCHEMES_DIR/Builtin Tango Light.xrdb"
-    theme_file="$SCHEMES_DIR/BlulocoLight.xrdb"
+    #theme_file="$SCHEMES_DIR/BlulocoLight.xrdb"
     #theme_file="$SCHEMES_DIR/CLRS.xrdb"
     #theme_file="$SCHEMES_DIR/Piatto Light.xrdb"
+    theme_name=BlulocoLight
+    TMUX_DIR=${TMUX_DIR}-light
 fi
+
+# set theme variables
+xrdb_file=$XRDB_DIR/${theme_name}.xrdb
+tmux_theme=$TMUX_DIR/${theme_name}.tmux
 
 # finally, set color scheme
 #for tty in $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}"); do
 if [ $all ]; then
     echo "$theme" > $HOME/.theme
-    $OSC_PATH/xrdb2osc.py "$theme_file" $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}")
+    # set terminal theme
+    $OSC_PATH/xrdb2osc.py "$xrdb_file" $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}")
     #for tty in $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}"); do
     #    $OSC_PATH/xrdb2osc.py "$theme_file" > $tty
     #done
+
+    # set tmux theme
+    tmux source-file ${tmux_theme}
 else
-    $OSC_PATH/xrdb2osc.py "$theme_file"
+    $OSC_PATH/xrdb2osc.py "$xrdb_file"
 fi
