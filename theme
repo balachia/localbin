@@ -12,14 +12,15 @@ if [ "$1" = "-all" ]; then
 fi
 
 theme="$1"
-theme_name=$theme
+theme_name="$theme"
 
 #theme_file=$SCHEMES_DIR/$theme
 if [ "$theme" = "dark" ]; then
     #theme_file="$SCHEMES_DIR/Builtin Tango Dark.xrdb"
     #theme_file="$SCHEMES_DIR/synthwave.xrdb"
     #theme_file="$SCHEMES_DIR/Jellybeans.xrdb"
-    theme_name=Jellybeans
+    #theme_name=Jellybeans
+    theme_name=Japanesque
     TMUX_DIR=${TMUX_DIR}-dark
 fi
 if [ "$theme" = "light" ]; then
@@ -32,8 +33,8 @@ if [ "$theme" = "light" ]; then
 fi
 
 # set theme variables
-xrdb_file=$XRDB_DIR/${theme_name}.xrdb
-tmux_theme=$TMUX_DIR/${theme_name}.tmux
+xrdb_file="$XRDB_DIR/${theme_name}.xrdb"
+tmux_theme="$TMUX_DIR/${theme_name}.tmux"
 
 # finally, set color scheme
 #for tty in $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}"); do
@@ -47,7 +48,7 @@ if [ $all ]; then
     #done
 
     # set tmux theme
-    ln -sf ${tmux_theme} ${CONFIG_DIR}/theme.tmux
+    ln -sf "${tmux_theme}" ${CONFIG_DIR}/theme.tmux
     tmux source-file ${CONFIG_DIR}/theme.tmux
 else
     $OSC_PATH/xrdb2osc.py "$xrdb_file"
