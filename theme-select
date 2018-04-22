@@ -18,6 +18,7 @@ fi
 echo -n "" >! $class
 
 for file in "${(@f)"$(echo $files)"}"; do
+    file=${file%.xrdb}
     theme -all $file
     echo -n $file
     echo -n ": ${class}? [y/N] "
