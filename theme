@@ -3,6 +3,7 @@
 SCHEMES_DIR=$HOME/.local/src/iTerm2-Color-Schemes/
 XRDB_DIR=$SCHEMES_DIR/xrdb
 TMUX_DIR=$SCHEMES_DIR/tmux
+CONFIG_DIR=$HOME/.config/themes
 OSC_PATH=$HOME/.local/bin
 
 if [ "$1" = "-all" ]; then
@@ -38,6 +39,7 @@ tmux_theme=$TMUX_DIR/${theme_name}.tmux
 #for tty in $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}"); do
 if [ $all ]; then
     echo "$theme" > $HOME/.theme
+
     # set terminal theme
     $OSC_PATH/xrdb2osc.py "$xrdb_file" $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}")
     #for tty in $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}"); do
@@ -45,7 +47,8 @@ if [ $all ]; then
     #done
 
     # set tmux theme
-    tmux source-file ${tmux_theme}
+    ln -sf ${tmux_theme} ${CONFIG_DIR}/theme.tmux
+    tmux source-file ${CONFIG_DIR}/theme.tmux
 else
     $OSC_PATH/xrdb2osc.py "$xrdb_file"
 fi
