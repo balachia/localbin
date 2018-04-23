@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 
-SCHEMES_DIR=$HOME/.local/src/iTerm2-Color-Schemes/
+SCHEMES_DIR=$HOME/.local/src/iTerm2-Color-Schemes
 XRDB_DIR=$SCHEMES_DIR/xrdb
-TMUX_DIR=$SCHEMES_DIR/tmux
+TMUX_DIR=${TMUX_DIR:-$SCHEMES_DIR/tmux}
 CONFIG_DIR=$HOME/.config/themes
 OSC_PATH=$HOME/.local/bin
 
@@ -28,7 +28,8 @@ if [ "$theme" = "light" ]; then
     #theme_file="$SCHEMES_DIR/BlulocoLight.xrdb"
     #theme_file="$SCHEMES_DIR/CLRS.xrdb"
     #theme_file="$SCHEMES_DIR/Piatto Light.xrdb"
-    theme_name=BlulocoLight
+    #theme_name=BlulocoLight
+    theme_name=CLRS
     TMUX_DIR=${TMUX_DIR}-light
 fi
 
