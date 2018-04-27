@@ -43,7 +43,8 @@ if [ $all ]; then
     echo "$theme" > $HOME/.theme
 
     # set terminal theme
-    $OSC_PATH/xrdb2osc.py "$xrdb_file" $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}")
+    #$OSC_PATH/xrdb2osc.py "$xrdb_file" $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}")
+    $OSC_PATH/xrdb2osc.sh "$xrdb_file" $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}")
     #for tty in $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}"); do
     #    $OSC_PATH/xrdb2osc.py "$theme_file" > $tty
     #done
@@ -52,5 +53,5 @@ if [ $all ]; then
     ln -sf "${tmux_theme}" ${CONFIG_DIR}/theme.tmux
     tmux source-file ${CONFIG_DIR}/theme.tmux
 else
-    $OSC_PATH/xrdb2osc.py "$xrdb_file"
+    $OSC_PATH/xrdb2osc.sh "$xrdb_file"
 fi
