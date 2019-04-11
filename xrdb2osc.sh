@@ -18,12 +18,13 @@ CURSOR_FMT="${PRE}12;#\\1${POST}"
 
 RE="s/${BG_RE}/${BG_FMT}/p;s/${FG_RE}/${FG_FMT}/p;s/${CURSOR_RE}/${CURSOR_FMT}/p;s/${COLOR_RE}/${COLOR_FMT}/p;"
 
-out=$(sed -n -E "$RE" "${xrdb}" | tr '\n' '\0')
+#out=$(sed -n -E "$RE" "${xrdb}" | tr '\n' '\0')
+out=$(sed -n -E "$RE" "${xrdb}" | tr -d '\n')
 
 if [ $# -eq 0 ]; then
-    echo "$out\c"
+    printf "$out"
 else
     for file in $@; do
-        echo "$out\c" > $file
+        printf "$out" > $file
     done
 fi
