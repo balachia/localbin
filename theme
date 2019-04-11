@@ -12,6 +12,7 @@ fi
 theme="$1"
 theme_name="$theme"
 
+# TODO: don't set defaults here
 #theme_file=$SCHEMES_DIR/$theme
 if [ "$theme" = "dark" ]; then
     theme_name=Pnevma
@@ -24,14 +25,27 @@ fi
 xrdb_file="$XRDB_DIR/${theme_name}.xrdb"
 
 # finally, set color scheme
-#for tty in $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}"); do
 if [ $all ]; then
     echo "$theme" > $HOME/.theme
 
-    # better osc code
-    # TODO: the find call is HIGHLY os dependent
+    # kernel dependence of tty names??
+    # TODO: what am i missing? is there a better way?
+    KERNEL=$(uname -s)
+    case $KERNEL in
+        Linux)
+            ALL_TTY_RE="/dev/pts/[0-9]+"
+            ;;
+        Darwin)
+            ALL_TTY_RE="/dev/ttys[0-9]{3}"
+            ;;
+        *)
+            ALL_TTY_RE="/dev/pts/[0-9]+"
+            ;;
+    esac
+
     #$OSC_PATH/xrdb2osc.sh "$xrdb_file" $(find -E /dev -maxdepth 1 -regex "/dev/ttys[0-9]{3}")
-    $OSC_PATH/xrdb2osc.sh "$xrdb_file" $(find /dev -regex "/dev/pts/[0-9]+")
+    #$OSC_PATH/xrdb2osc.sh "$xrdb_file" $(find /dev -regex "/dev/pts/[0-9]+")
+    $OSC_PATH/xrdb2osc.sh "$xrdb_file" $(find /dev -regex $ALL_TTY_RE)
 
 else
     $OSC_PATH/xrdb2osc.sh "$xrdb_file"
