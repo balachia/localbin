@@ -14,8 +14,11 @@ fi
 
 OUT=$(date "+%Y-%m-%d")
 OUTDIR="$HOME/Pictures/working/$OUT"
-mkdir -p "$OUTDIR"
+OUTDIRRAW="$OUTDIR/raw-$OUT"
+OUTDIRVID="$OUTDIR/video-$OUT"
+mkdir -p "$OUTDIR" "$OUTDIRRAW" "$OUTDIRVID"
 
+# find raw folders
 #INDIR="/Volumes/$DIR/DCIM/100MSDCF/"
 INDIR=$(find "/Volumes/$DIR/DCIM" -maxdepth 1 -type d -name "*MSDCF" -print)
 INDIRLINES=$(echo $INDIR | wc -l)
@@ -24,6 +27,11 @@ echo "Reading:\n$INDIR"
 if [ $INDIRLINES -gt 1 ]; then
     echo "Too many directories"
     exit 1
-else
-    rsync -av --info=progress2 --include "*.ARW" --exclude "*" "$INDIR/" "$OUTDIR"
 fi
+
+# copy raws
+rsync -av --info=progress2 --include "*.ARW" --exclude "*" "$INDIR/" "$OUTDIRRAW"
+
+# TODO: copy loose jpegs
+
+# TODO: copy videos

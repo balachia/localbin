@@ -1,12 +1,13 @@
 #!/bin/sh
 
-if [ "$1" == "" ]; then
-    echo "Usage: photo-backup.sh FOLDER"
-    exit 1
-fi
-
 WORKDIR=$HOME/Pictures/working
 OUTDIR=/Volumes/home/Photos
+
+if [ "$1" == "" ]; then
+    echo "Usage: photo-backup.sh FOLDER"
+    ls $WORKDIR
+    exit 1
+fi
 
 cd $WORKDIR
 
