@@ -1,10 +1,10 @@
 #!/usr/bin/env Rscript
 
 #x <- capture.output(install.packages("devtools"))
-x <- system2("Rscript", "-e \"install.packages('devtools')\"", stdout = TRUE, stderr = TRUE)
-groups <- regmatches(x, regexec("installation of package .(.+). had", x))
-groups <- groups[sapply(groups, length) > 0]
-failed <- sapply(groups, function(x) x[[2]])
+#x <- system2("Rscript", "-e \"install.packages('devtools')\"", stdout = TRUE, stderr = TRUE)
+#groups <- regmatches(x, regexec("installation of package .(.+). had", x))
+#groups <- groups[sapply(groups, length) > 0]
+#failed <- sapply(groups, function(x) x[[2]])
 
 system.install.package <- function(package, ...) {
     package.string <- paste0("-e \"install.packages('", package, "')\"")
@@ -81,6 +81,7 @@ try.install('Rtsne')
 try.install('igraph')
 try.install('openxlsx')
 try.install('reshape2')
+try.install('shiny')
 
 #packages <- c("tidyverse",
 #              "data.table",
