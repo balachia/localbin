@@ -33,6 +33,8 @@ def get_msdcfs(dcim):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-d', '--debug', dest='debug', action='store_true')
+parser.add_argument('--novideo', dest='video', action='store_false')
+parser.add_argument('--nophoto', dest='photo', action='store_false')
 parser.add_argument('volume', nargs='?')
 
 if __name__=="__main__":
@@ -53,51 +55,53 @@ if __name__=="__main__":
 
     # pull raws + jpgs
     # find dcims/msdcfs
-    dcim = get_dcim(volume_dir)
-    if not dcim:
-        print('No DCIM found, skipping ARW/JPG')
-    else:
-        msdcfs = get_msdcfs(dcim)
-        # TODO: what if msdcfs don't exist
+    if args.photo:
+        dcim = get_dcim(volume_dir)
+        if not dcim:
+            print('No DCIM found, skipping ARW/JPG')
+        else:
+            msdcfs = get_msdcfs(dcim)
+            # TODO: what if msdcfs don't exist
 
-        for msdcf in msdcfs:
-            arws = [it for it in msdcf.iterdir() if re.match(r'^\.ARW$', it.suffix)]
-            arw_names = [it.stem for it in arws]
+            for msdcf in msdcfs:
+                arws = [it for it in msdcf.iterdir() if re.match(r'^\.ARW$', it.suffix)]
+                arw_names = [it.stem for it in arws]
 
-            # copy arws via tempfile
-            if arws:
-                # create output directories
-                outraw.mkdir(parents=True, exist_ok=True)
+                # copy arws via tempfile
+                if arws:
+                    # create output directories
+                    outraw.mkdir(parents=True, exist_ok=True)
 
-                print('Copying ARWs')
-                with closing(tempfile.NamedTemporaryFile('w')) as filelist:
-                    print(*[it.name for it in arws], sep='\n', flush=True, file=filelist)
-                    subprocess.check_call(['rsync', '-av', '--info=progress2', '--files-from', filelist.name, str(msdcf), str(outraw)])
+                    print('Copying ARWs')
+                    with closing(tempfile.NamedTemporaryFile('w')) as filelist:
+                        print(*[it.name for it in arws], sep='\n', flush=True, file=filelist)
+                        subprocess.check_call(['rsync', '-av', '--info=progress2', '--files-from', filelist.name, str(msdcf), str(outraw)])
 
-            # find non-redundant jpgs
-            jpgs = [it for it in msdcf.iterdir() if (re.match(r'^\.JPG$', it.suffix)) and (it.stem not in arw_names)]
-            if jpgs:
-                # create output directories
-                outjpg.mkdir(parents=True, exist_ok=True)
+                # find non-redundant jpgs
+                jpgs = [it for it in msdcf.iterdir() if (re.match(r'^\.JPG$', it.suffix)) and (it.stem not in arw_names)]
+                if jpgs:
+                    # create output directories
+                    outjpg.mkdir(parents=True, exist_ok=True)
 
-                print('Copying JPGs')
-                with closing(tempfile.NamedTemporaryFile('w')) as filelist:
-                    print(*[it.name for it in jpgs], sep='\n', flush=True, file=filelist)
-                    subprocess.check_call(['rsync', '-av', '--info=progress2', '--files-from', filelist.name, str(msdcf), str(outjpg)])
+                    print('Copying JPGs')
+                    with closing(tempfile.NamedTemporaryFile('w')) as filelist:
+                        print(*[it.name for it in jpgs], sep='\n', flush=True, file=filelist)
+                        subprocess.check_call(['rsync', '-av', '--info=progress2', '--files-from', filelist.name, str(msdcf), str(outjpg)])
 
     # pull videos
-    videos = volume_dir / 'PRIVATE' / 'M4ROOT' / 'CLIP'
-    if videos.exists:
-        mp4s = [it for it in videos.iterdir() if re.match(r'^.MP4$', it.suffix)]
-        if mp4s:
-            # create output dir
-            outvid.mkdir(parents=True, exist_ok=True)
+    if args.video:
+        videos = volume_dir / 'PRIVATE' / 'M4ROOT' / 'CLIP'
+        if videos.exists:
+            mp4s = [it for it in videos.iterdir() if re.match(r'^.MP4$', it.suffix)]
+            if mp4s:
+                # create output dir
+                outvid.mkdir(parents=True, exist_ok=True)
 
-            # rsync
-            print('Copying MP4s')
-            with closing(tempfile.NamedTemporaryFile('w')) as filelist:
-                print(*[it.name for it in mp4s], sep='\n', flush=True, file=filelist)
-                subprocess.check_call(['rsync', '-av', '--info=progress2', '--files-from', filelist.name, str(videos), str(outvid)])
+                # rsync
+                print('Copying MP4s')
+                with closing(tempfile.NamedTemporaryFile('w')) as filelist:
+                    print(*[it.name for it in mp4s], sep='\n', flush=True, file=filelist)
+                    subprocess.check_call(['rsync', '-av', '--info=progress2', '--files-from', filelist.name, str(videos), str(outvid)])
 
 # # find camera directories
 # volume_dir = Path('/Volumes/NO NAME')
